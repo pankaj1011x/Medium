@@ -27,10 +27,12 @@ userRoute.post("/signup", async (c) => {
   try {
     const user = await prisma.users.create({
       data: {
+        name: body.name,
         email: body.email,
         password: body.password,
       },
     });
+
     const token = await sign(
       {
         id: user.id,

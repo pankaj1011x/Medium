@@ -28,17 +28,20 @@ blogRoute.use("/*", async (c, next) => {
     }
   } catch (err) {
     c.status(403);
-    return c.json({ error: "unauthorized" });
+    return c.json({ error: "Unauthorized" });
   }
 });
 
 blogRoute.post("/", async (c) => {
   const body = await c.req.json();
+
   const { success } = createBloginput.safeParse(body);
+  console.log(success);
+
   if (!success) {
     c.status(411);
     return c.json({
-      msg: "invlid inputs",
+      msg: "invalid inputs",
     });
   }
   const userId = c.get("userId");
@@ -95,8 +98,18 @@ blogRoute.get("/bulk", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
   try {
-    const posts = await prisma.posts.findMany();
-    console.log(posts);
+    const posts = await prisma.posts.findMany({
+      select: {
+        content: true,
+        title: true,
+        id: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
     return c.json(posts);
   } catch (err) {
@@ -117,6 +130,16 @@ blogRoute.get("/:id", async (c) => {
     const post = await prisma.posts.findFirst({
       where: {
         id: id,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     return c.json({

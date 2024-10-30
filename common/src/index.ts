@@ -10,12 +10,12 @@ export const signinInput = z.object({
   password: z.string().min(6),
 });
 export const createBloginput = z.object({
-  title: z.string().email(),
-  content: z.string().min(6),
+  title: z.string(),
+  content: z.string(),
 });
 export const updateBloginput = z.object({
-  title: z.string().email(),
-  content: z.string().min(6),
+  title: z.string(),
+  content: z.string(),
   id: z.string(),
 });
 export type SignupInput = z.infer<typeof signupInput>;
